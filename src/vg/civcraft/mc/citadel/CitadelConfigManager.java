@@ -252,4 +252,8 @@ public class CitadelConfigManager {
 		}
 		return reinforceableMats;
 	}
+
+	public static String getName(String type) {
+		return config.getString("reinforcements." + type + ".name");
+	}
 }

@@ -29,6 +29,7 @@ public class ReinforcementType {
 	private ReinforcementEffect effect;
 	private Set <Material> allowedReinforceables;
 	private Set <Material> disallowedReinforceables;
+	private String name;
 	
 	private static Map<ItemStack, ReinforcementType> types = 
 			new HashMap<ItemStack, ReinforcementType>();
@@ -36,7 +37,7 @@ public class ReinforcementType {
 	public ReinforcementType(Material mat, int amount, double percentReturn,
 			int returnValue, int hitpoints, int maturationTime, int acidTime,
 			int scale, List<String> lore, ReinforcementEffect effect, Set <Material> allowsReinforceables, 
-			Set <Material> disallowedReinforceables, int gracePeriod) {
+			Set <Material> disallowedReinforceables, int gracePeriod, String name) {
 		this.mat = mat;
 		this.amount = amount;
 		this.percentReturn = percentReturn/100;
@@ -46,9 +47,11 @@ public class ReinforcementType {
 		this.acidTime = acidTime;
 		this.scale = scale;
 		this.effect = effect;
+		this.name = name;
 		ItemStack stack = new ItemStack(mat, amount);
 		ItemMeta meta = stack.getItemMeta();
 		meta.setLore(lore);
+		meta.setDisplayName(name);
 		stack.setItemMeta(meta);
 		this.stack = stack;
 		types.put(stack, this);
@@ -68,6 +71,7 @@ public class ReinforcementType {
 			int maturation = CitadelConfigManager.getMaturationTime(type);
 			int acid = CitadelConfigManager.getAcidTime(type);
 			int maturation_scale = CitadelConfigManager.getMaturationScale(type);
+			String reinforcementName = CitadelConfigManager.getName(type);
 			List<String> lore = CitadelConfigManager.getLoreValues(type);
 			ReinforcementEffect effect = CitadelConfigManager.getReinforcementEffect(type);
 			List <String> reinforceableMatString = CitadelConfigManager.getReinforceableMaterials(type);
@@ -76,15 +80,15 @@ public class ReinforcementType {
 			Set <Material> nonReinforceableMats = CitadelConfigManager.parseMaterialList(unreinforceableMatString);
 			int gracePeriod = CitadelConfigManager.getGracePeriod(type);
 			new ReinforcementType(mat, amount, percentReturn, returnValue,
-					hitpoints, maturation, acid, maturation_scale, lore, effect, reinforceableMats, nonReinforceableMats, gracePeriod);
+					hitpoints, maturation, acid, maturation_scale, lore, effect, reinforceableMats, nonReinforceableMats, gracePeriod, reinforcementName);
 			if (CitadelConfigManager.shouldLogInternal()) {
 				Citadel.getInstance().getLogger().log(Level.INFO,
 						"Adding Reinforcement {0} with:\n  material {1} \n  amount {2} "
 								+ "\n  return rate {3} \n  return? {4} \n  health {5} \n  maturation {6} "
-								+ "\n  acid {7} \n  scaling {8} \n  lore: {9} \n  effect: \n {10} \n grace: {11}",
+								+ "\n  acid {7} \n  scaling {8} \n  lore: {9} \n  effect: \n {10} \n grace: {11} \n name: {12}",
 						new Object[] { type, mat.toString(), amount, percentReturn, returnValue, hitpoints, maturation,
 								acid, maturation_scale, (lore != null ? String.join("   ", lore) : ""), (effect != null ? effect : ""),
-								gracePeriod});
+								gracePeriod, reinforcementName});
 			}
 		}
     }
